@@ -83,11 +83,11 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <svg viewBox="0 0 128 128" width="128" height="128" style="animation:ghspin 28s linear infinite"><defs><path id="ghc" d="M64 64m-48 0a48 48 0 1 1 96 0a48 48 0 1 1 -96 0"></path></defs><circle cx="64" cy="64" r="63" fill="#ECE6D3"></circle><text style="font:500 9.5px Geist,sans-serif;letter-spacing:3.6px" fill="#221712"><textPath href="#ghc" data-sello="1">MASTER · LASH LIFTING · LIMA · PERÚ · </textPath></text></svg>
 <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:30px;color:#771011">G</span>
 </div>
-<div style="position:relative;z-index:2;width:100%;max-width:1440px;margin:0 auto;padding:120px calc(57% + 40px) 80px 0">
+<div style="position:relative;z-index:2;width:100%;max-width:1440px;margin:0 auto;padding:120px calc(min(1440px,100vw - 2*clamp(24px,4vw,56px)) - (43vw - 40px - clamp(24px,4vw,56px) - max(0px,(100vw - 2*clamp(24px,4vw,56px) - 1440px)/2))) 80px 0;container-type:inline-size">
 <div style="overflow:hidden">
 <div data-reveal="line" data-delay="300" style="display:flex;align-items:center;gap:14px;font:400 12px/1 Geist,sans-serif;letter-spacing:.32em;color:#6F635B"><span style="width:42px;height:1px;background:#771011;display:block"></span>{{ xAnte }}</div>
 </div>
-<h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(64px,7.4vw,136px);line-height:.92;letter-spacing:-.02em;color:#221712;margin:22px 0 0">
+<h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(56px,min(7.4vw,25cqi),136px);line-height:.92;letter-spacing:-.02em;color:#221712;margin:22px 0 0">
 <span style="display:block;overflow:hidden;padding-bottom:.04em"><span data-reveal="line" data-delay="420" style="display:block">{{ xL1 }}</span></span>
 <span style="display:block;overflow:hidden;padding:0 0 .08em .45em"><span data-reveal="line" data-delay="560" style="display:block;font-style:italic">{{ xL2 }}</span></span>
 </h1>
@@ -233,6 +233,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <div style="position:absolute;left:28px;right:28px;bottom:28px;pointer-events:none">
 <div style="font:400 10.5px/1 Geist,sans-serif;letter-spacing:.26em;color:#ECE6D3">NOMBRE DEL CURSO</div>
 <div style="font-family:'Instrument Serif',serif;font-size:clamp(32px,3vw,46px);line-height:1.02;color:#ECE6D3;margin-top:12px">{{ xCursoNomA }}<em>{{ xCursoNomB }}</em></div>
+<sc-if value="{{ showNotes }}"><span style="display:inline-block;margin-top:12px;padding:3px 10px;border-radius:6px;border:1px dashed rgba(236,230,211,.5);font:400 11px/1.4 Geist,sans-serif;color:#ECE6D3">Confirmar nombre oficial</span></sc-if>
 </div>
 </div>
 
@@ -244,6 +245,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <span style="font:400 10px/1 Geist,sans-serif;letter-spacing:.24em;color:{{ f.labelInk }}">{{ f.k }}</span>
 <span style="flex:1"></span>
 <span style="font-family:'Instrument Serif',serif;font-size:clamp(24px,2vw,30px);line-height:1.08;color:{{ f.ink }}">{{ f.v }}</span>
+<sc-if value="{{ f.hasNote }}"><span style="display:inline-block;align-self:flex-start;margin-top:9px;padding:2px 8px;border-radius:6px;border:1px dashed {{ f.dash }};font:400 10.5px/1.4 Geist,sans-serif;color:{{ f.labelInk }}">{{ f.note }}</span></sc-if>
 </div>
 </sc-for>
 </div>
@@ -252,6 +254,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <div data-reveal="up" data-delay="200" style="flex:1;border-radius:26px;border:1px solid rgba(34,23,18,.14);padding:clamp(24px,2.4vw,34px)">
 <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
 <span style="font-family:'Instrument Serif',serif;font-size:30px;line-height:1;color:#221712">Qué aprenderás</span>
+<sc-if value="{{ showNotes }}"><span style="font:400 11px/1.4 Geist,sans-serif;color:#771011">Temario editable · confirmar con Gabriela</span></sc-if>
 </div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:2px 24px;margin-top:20px">
 <sc-for list="{{ temario }}" as="t" hint-placeholder-count="8">
@@ -300,7 +303,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <span style="display:block;overflow:hidden;padding-bottom:.06em"><span data-reveal="line" data-delay="110" style="display:block"><em>{{ xTrabL2 }}</em></span></span>
 </h2>
 </div>
-<p data-reveal="up" data-delay="180" style="font:300 15px/1.7 Geist,sans-serif;color:#6F635B;margin:0;max-width:300px">Pasa el cursor para ver el detalle y toca “Ampliar” para verla completa.</p>
+<p data-reveal="up" data-delay="180" style="font:300 15px/1.7 Geist,sans-serif;color:#6F635B;margin:0;max-width:300px">{{ xTrabTexto }}</p>
 </div>
 
 <div style="display:grid;grid-template-columns:repeat({{ galCols }},minmax(0,1fr));gap:clamp(12px,1.4vw,20px);margin-top:clamp(44px,6vh,70px);padding-bottom:{{ galPad }}">
@@ -356,6 +359,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <span style="display:block;overflow:hidden"><span data-reveal="line" style="display:block">{{ xTesL1 }}</span></span>
 <span style="display:block;overflow:hidden;padding-bottom:.06em"><span data-reveal="line" data-delay="110" style="display:block"><em>{{ xTesL2 }}</em></span></span>
 </h2>
+<sc-if value="{{ showNotes }}"><span data-reveal="up" style="padding:6px 12px;border-radius:8px;border:1px dashed #C0BFB2;font:400 11.5px/1.4 Geist,sans-serif;color:#771011">Espacios listos para testimonios reales</span></sc-if>
 </div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:clamp(14px,1.6vw,22px);margin-top:clamp(46px,6vh,70px)">
 <sc-for list="{{ testimonios }}" as="t" hint-placeholder-count="3">
@@ -1003,10 +1007,13 @@ class Component extends DCLogic {
     const fichaStyles={
       MODALIDAD:['#F5F0E1','#221712','#771011'], 'DURACIÓN':['#F5F0E1','#221712','#771011'],
       MATERIALES:['#E3DCC6','#221712','#771011'], 'INVERSIÓN':['#771011','#ECE6D3','#C0BFB2'], CERTIFICADO:['#E3DCC6','#221712','#771011']};
+    const showNotes=v('ajustes.notas')!==false;
+    const fichaNotes={MODALIDAD:'Por confirmar','DURACIÓN':'Por definir',MATERIALES:'Detallar contenido','INVERSIÓN':'Editable'};
     const ficha=[['MODALIDAD',s('curso.modalidad')],['DURACIÓN',s('curso.duracion')],['MATERIALES',s('curso.materiales')],
       ['INVERSIÓN',s('curso.inversion')],['CERTIFICADO',v('curso.cert')?'Incluido':'']]
       .filter(([,val])=>val.trim())
-      .map(([k,val],i)=>{const [bg,ink,labelInk]=fichaStyles[k]; return {k,v:val,bg,ink,labelInk,delay:String(i*90)};});
+      .map(([k,val],i)=>{const [bg,ink,labelInk]=fichaStyles[k]; const note=showNotes?(fichaNotes[k]||''):'';
+        return {k,v:val,bg,ink,labelInk,dash:k==='INVERSIÓN'?'rgba(192,191,178,.5)':'#C0BFB2',note,hasNote:!!note,delay:String(i*90)};});
     const tes=arr('testimonios.lista').filter(p=>p&&((p[0]||'').trim()||(p[1]||'').trim()));
     return {
       root:this.root, cursorRef:this.cursorRef, baBox:this.baBox,
@@ -1036,6 +1043,7 @@ class Component extends DCLogic {
       xCursoNomA:words(cursoNom).length>2?head(cursoNom,2)+' ':'', xCursoNomB:words(cursoNom).length>2?tail(cursoNom,2):cursoNom,
       xCursoCta:s('curso.cta'),
       xMetEt:U('metodo.etiqueta'), xMetL1:s('metodo.l1'), xMetL2:s('metodo.l2'), xMetTexto:s('metodo.texto'),
+      showNotes, xTrabTexto:s('trabajos.texto'),
       xTrabEt:U('trabajos.etiqueta'), xTrabL1:s('trabajos.l1'), xTrabL2:s('trabajos.l2'),
       xResEt:U('resultados.etiqueta'), xResL1:s('resultados.l1'), xResL2:s('resultados.l2'), xResNota:s('resultados.nota'),
       xTesL1:s('testimonios.l1'), xTesL2:s('testimonios.l2'),
@@ -1047,7 +1055,7 @@ class Component extends DCLogic {
 
       espRight: mob?'12px':'-6%', perfilCols: mob?'1fr':'150px 1fr', perfilGap: mob?'6px':'18px',
       perfil: arr('sobre.perfil').filter(p=>p&&(p[0]||p[1]))
-        .map(([k,val],i)=>({k:String(k||'').toUpperCase(),v:val||'',pending:false,ph:'',delay:String(60+i*60)})),
+        .map(([k,val,ph],i)=>({k:String(k||'').toUpperCase(),v:val||'',pending:!!(showNotes&&ph),ph:ph||'',delay:String(60+i*60)})),
 
       pilares: arr('autoridad.pilares').map(([t,d],i)=>({n:String(i+1).padStart(2,'0'),t,d,delay:String(i*110)})),
 
@@ -1116,7 +1124,8 @@ const ED_SECS=[
   T('ctaMenu','Botón del menú',24), T('ciudad','Ciudad',30),
   T('sello','Texto del sello que gira',44,{full:true}),
   {k:'menu',label:'Textos del menú',type:'list',fixed:5,hint:'Cambia cómo se llama cada enlace del menú de arriba.'},
-  T('seo','Título en Google',60,{full:true}), A('seoDesc','Descripción en Google',160,{rows:2})]},
+  T('seo','Título en Google',60,{full:true}), A('seoDesc','Descripción en Google',160,{rows:2}),
+  {k:'notas',label:'Mostrar recuadros “por confirmar”',type:'toggle',on:'Se muestran en la web',off:'Ocultos',hint:'Las notas punteadas del diseño (años de experiencia, Por definir, Editable…). Apágalo cuando completes los datos reales.'}]},
  {id:'inicio',t:'Inicio',help:'Lo primero que ve una visitante al entrar.',fields:[
   T('ante','Texto pequeño sobre el título',24), T('scroll','Texto “Scroll para descubrir”',26),
   T('l1','Título · primera línea',18), T('l2','Título · segunda línea (cursiva)',18),
@@ -1156,6 +1165,7 @@ const ED_SECS=[
   {k:'pasos',label:'Los 6 pasos',type:'pairs',a:'PASO',b:'DESCRIPCIÓN',fixed:6}]},
  {id:'trabajos',t:'Trabajos',help:'Arrastra tus fotos a cada recuadro y escribe su leyenda debajo.',fields:[
   T('etiqueta','Etiqueta',24), T('l1','Título · línea 1',22), T('l2','Título · línea 2 (cursiva)',22),
+  A('texto','Texto junto al título',140,{rows:2}),
   {k:'galeria',label:'Fotos de la galería',type:'gallery',hint:'Verticales. Todas se muestran del mismo tamaño.'}]},
  {id:'resultados',t:'Resultados',help:'La sección solo aparece cuando subes las dos fotos.',fields:[
   T('etiqueta','Etiqueta',24), T('nota','Nota bajo las fotos',120),
@@ -1173,11 +1183,12 @@ const ED_SECS=[
 ];
 const ED_DEFAULT={
  'ajustes.nombre':'Gabriela Huarcaya','ajustes.subtitulo':'Master Lash Lifting','ajustes.whatsapp':'51900000000',
- 'ajustes.instagram':'','ajustes.mensaje':'Hola Gabriela, quiero información del curso de Lifting de Pestañas.',
+ 'ajustes.instagram':'https://instagram.com/','ajustes.mensaje':'Hola Gabriela, quiero información del curso de Lifting de Pestañas.',
  'ajustes.ctaMenu':'Quiero información','ajustes.ciudad':'Lima, Perú','ajustes.sello':'MASTER · LASH LIFTING · LIMA · PERÚ',
  'ajustes.menu':['Inicio','Sobre Gabriela','Curso','Trabajos','Contacto'],
  'ajustes.seo':'Gabriela Huarcaya | Master en Lifting de Pestañas',
  'ajustes.seoDesc':'Aprende Lifting de Pestañas con Gabriela Huarcaya, Master en Lifting. Pide información por WhatsApp.',
+ 'ajustes.notas':true,
  'inicio.ante':'Master en','inicio.scroll':'Scroll para descubrir','inicio.l1':'Lifting de','inicio.l2':'Pestañas',
  'inicio.frase':'Transforma tu técnica.\nEleva tu profesión.','inicio.cta1':'Conocer el curso','inicio.cta2':'Ver trabajos',
  'inicio.fotoAlt':'Retrato de Gabriela Huarcaya',
@@ -1189,22 +1200,22 @@ const ED_DEFAULT={
  'sobre.etiqueta':'Conoce a Gabriela','sobre.esp':'Master en Lifting de Pestañas','sobre.l1':'Gabriela','sobre.l2':'Huarcaya',
  'sobre.texto':'Gabriela se especializó en una sola cosa: llevar la pestaña natural a su mejor versión. Su forma de enseñar nace del trabajo diario en cabina, donde cada ojo exige una lectura distinta.',
  'sobre.tarEt':'Especialidad','sobre.tarTi':'Lifting de Pestañas',
- 'sobre.perfil':[['Especialización','Lifting y laminado de pestañas naturales'],['Pasión','Realzar la pestaña natural, sin extensiones'],['Resultados','Curvatura natural, limpia y duradera']],
+ 'sobre.perfil':[['Experiencia','Trayectoria en cabina','años de experiencia'],['Especialización','Lifting y laminado de pestañas naturales'],['Formación','Estudios y certificaciones','agregar formación real'],['Pasión','Realzar la pestaña natural, sin extensiones'],['Enseñanza','Clases a profesionales y principiantes','alumnas formadas'],['Resultados','Curvatura natural, limpia y duradera']],
  'autoridad.l1':'Una técnica que se','autoridad.l2':'aprende con conocimiento.',
  'autoridad.texto':'No se trata de seguir pasos de memoria. Se trata de entender por qué funciona cada uno.',
  'autoridad.pilares':[['Técnica','Moldes, productos y tiempos: entender cada decisión antes de aplicarla.'],['Precisión','Separar, posicionar y fijar cada pestaña con un trazo limpio.'],['Diseño','Leer la forma del ojo y elegir la curvatura que lo favorece.'],['Perfeccionamiento','Corregir, repetir y afinar hasta que el resultado sea consistente.']],
  'curso.etiqueta':'El curso','curso.nombre':'Curso de Lifting de Pestañas',
  'curso.l1':'Aprende Lifting de Pestañas','curso.l2':'de la mano de una Master.',
- 'curso.modalidad':'','curso.duracion':'','curso.materiales':'','curso.inversion':'','curso.cert':false,
+ 'curso.modalidad':'Presencial / Online','curso.duracion':'— horas','curso.materiales':'Kit de práctica','curso.inversion':'S/ —','curso.cert':false,
  'curso.cta':'Quiero información del curso',
  'curso.temario':['Anatomía y ciclo de la pestaña','Diagnóstico del ojo','Elección del molde','Tiempos de procesado','Tinte y nutrición','Bioseguridad e higiene','Corrección de errores','Atención y fidelización'],
  'metodo.etiqueta':'El método','metodo.l1':'Así vivirás','metodo.l2':'el curso.',
  'metodo.texto':'Seis etapas, de la base teórica a tu primer resultado propio. Cada una se apoya en la anterior.',
  'metodo.pasos':[['Preparación','Higiene, materiales y organización de tu estación de trabajo.'],['Teoría','La estructura de la pestaña, los productos y cómo actúan.'],['Demostración','Gabriela realiza el procedimiento completo, paso a paso y explicado.'],['Práctica','Trabajas con acompañamiento directo y correcciones en el momento.'],['Perfeccionamiento','Afinas detalles: simetría, curvatura y acabado.'],['Resultados','Cierras con un trabajo propio que puedes mostrar con orgullo.']],
- 'trabajos.etiqueta':'Trabajos','trabajos.l1':'Hecho a mano,','trabajos.l2':'pestaña a pestaña.',
- 'resultados.etiqueta':'Resultados','resultados.nota':'Desliza el círculo para comparar.',
+ 'trabajos.etiqueta':'Trabajos','trabajos.texto':'Arrastra tus fotos sobre cada espacio. Pasa el cursor para ver el detalle y toca “Ampliar” para verla completa.','trabajos.l1':'Hecho a mano,','trabajos.l2':'pestaña a pestaña.',
+ 'resultados.etiqueta':'Resultados','resultados.nota':'Desliza el círculo para comparar. Solo se publican fotos reales de antes y después.',
  'resultados.l1':'El resultado','resultados.l2':'habla por sí solo.',
- 'testimonios.l1':'Lo que dicen','testimonios.l2':'mis alumnas.','testimonios.lista':[],
+ 'testimonios.l1':'Lo que dicen','testimonios.l2':'mis alumnas.','testimonios.lista':[0,1,2].map(()=>['Nombre de la alumna · Curso realizado','Aquí irá el comentario real de una alumna sobre su experiencia en el curso.']),
  'contacto.etiqueta':'Contacto','contacto.cta2':'Ver trabajos','contacto.l1':'Quiero aprender','contacto.l2':'Lifting.',
  'contacto.texto':'Escríbele a Gabriela directamente. Sin formularios ni registros: te responde ella.',
  'contacto.cta':'Quiero información del curso'
