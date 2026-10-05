@@ -1048,7 +1048,7 @@ class Component extends DCLogic {
     const words=(t)=>String(t||'').split(' ');
     const head=(t,n)=>words(t).slice(0,n).join(' '), tail=(t,n)=>words(t).slice(n).join(' ');
     const wa=waLink(s('whatsapp.numero'),s('whatsapp.mensaje'));
-    const ig=s('ajustes.instagram').trim();
+    const ig=igLink(s('ajustes.instagram'));
     const showCursor=!!(this.fine&&!this.reduced&&!mob);
     const ital=new Set(['precisión,','conocimiento','experiencia.','precisión','conocimiento,','experiencia']);
     const autL2=s('autoridad.l2'), cursoL2=s('curso.l2'), tarTi=s('sobre.tarTi'), cursoNom=s('curso.nombre');
@@ -1173,8 +1173,20 @@ class Component extends DCLogic {
 
 // Enlace de WhatsApp a partir del número (solo dígitos) y el mensaje.
 const waLink=(num,msg)=>'https://wa.me/'+String(num||'').replace(/\D/g,'')+'?text='+encodeURIComponent(String(msg||''));
+// Enlace de Instagram a partir de @usuario, usuario o la URL del perfil (vacío = sin enlace).
+const igLink=(raw)=>{
+  const t=String(raw||'').trim(); if(!t) return '';
+  const m=t.match(/^(?:https?:\/\/)?(?:www\.)?instagram\.com\/?([A-Za-z0-9._]*)/i);
+  const user=(m?m[1]:t.replace(/^@/,'')).replace(/[^A-Za-z0-9._]/g,'');
+  return user?'https://www.instagram.com/'+user+'/':'https://www.instagram.com/';
+};
 // Validaciones de campos especiales; devuelve el texto del error o ''.
 const fieldError=(fd,v)=>{
+  if(fd.check==='instagram'){
+    const t=String(v||'').trim();
+    if(t&&/^https?:\/\//i.test(t)&&!/instagram\.com/i.test(t)) return 'Ese enlace no es de Instagram. Escribe tu usuario, por ejemplo @tuusuario.';
+    if(t&&!/^https?:\/\//i.test(t)&&/[^@A-Za-z0-9._]/.test(t.replace(/^@/,''))) return 'El usuario solo puede tener letras, números, puntos y guiones bajos.';
+  }
   if(fd.check==='phone'){
     const d=String(v||'').replace(/[\s+()-]/g,'');
     if(!/^\d+$/.test(d)) return 'Escribe solo números, sin letras.';
@@ -1188,7 +1200,7 @@ const ED_SECS=[
  {id:'ajustes',t:'Ajustes del sitio',help:'Tu logo, tu nombre y cómo aparece la web en Google y al compartir el enlace.',fields:[
   {k:'logo',label:'Tu logo',type:'image',slot:'gh-logo',ratio:'1/1',hint:'Aparece junto a tu nombre, en el centro del sello y en la pestaña del navegador. Mejor PNG cuadrado con fondo transparente.'},
   T('nombre','Tu nombre',30), T('subtitulo','Frase bajo tu nombre',30,{hint:'Ej.: MASTER LASH LIFTING'}),
-  T('instagram','Enlace de Instagram',80,{ph:'https://instagram.com/usuario'}),
+  T('instagram','Tu Instagram',80,{ph:'@tuusuario',check:'instagram',hint:'Escribe tu usuario (@tuusuario) o pega el enlace de tu perfil. Déjalo vacío para ocultar el enlace.'}),
   T('ctaMenu','Botón del menú',24), T('ciudad','Ciudad',30),
   T('sello','Texto del sello que gira',44,{full:true}),
   {k:'menu',label:'Textos del menú',type:'list',fixed:5,hint:'Cambia cómo se llama cada enlace del menú de arriba.'},
