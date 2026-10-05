@@ -48,7 +48,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 [data-wa-tip]{position:absolute;right:0;bottom:calc(100% + 12px);transform:translateY(8px);opacity:0;white-space:nowrap;padding:10px 15px;border-radius:999px;background:#221712;color:#ECE6D3;font:500 12.5px/1 Geist,sans-serif;letter-spacing:.01em;box-shadow:0 14px 30px -14px rgba(34,23,18,.55);pointer-events:none;transition:opacity .35s ease,transform .45s cubic-bezier(.16,1,.3,1)}
 @media (hover:hover) and (min-width:1024px){[data-wa-tip]{animation:ghtip 5.2s cubic-bezier(.16,1,.3,1) 4s 1 both}[data-wa]:hover [data-wa-tip]{animation:none;opacity:1;transform:none}}
 @media (max-width:1023px){[data-wa-tip]{display:none}}
-@media (max-width:359px){header a[href="#inicio"] span span:first-child{letter-spacing:.16em}header a[href="#inicio"] span span:last-child{letter-spacing:.22em}}
+@media (max-width:379px){header a[href="#inicio"]>span:not(:last-child){width:32px!important;height:32px!important}header a[href="#inicio"]>span:not(:last-child)>span{font-size:17px!important}header a[href="#inicio"]>span:last-child>span:first-child{font-size:11.5px!important;letter-spacing:.17em!important}header a[href="#inicio"]>span:last-child>span:last-child{font-size:8.5px!important;letter-spacing:.24em!important}header a[href="#inicio"]{gap:9px!important}header>div{gap:12px!important}}
 @keyframes ghlogo{from{opacity:0;transform:scale(.55) rotate(-14deg)}to{opacity:1;transform:none}}
 @keyframes ghseal{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
 </style></helmet>
@@ -148,6 +148,11 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <image-slot id="gh-hero" shape="rect" placeholder="Fotografía editorial de Gabriela"></image-slot>
 </div>
 <div style="position:absolute;left:0;right:0;bottom:0;height:38%;background:linear-gradient(180deg,rgba(236,230,211,0),rgba(236,230,211,.92));pointer-events:none"></div>
+</div>
+<div data-reveal="fade" data-delay="900" style="position:absolute;right:16px;top:86px;width:96px;height:96px;filter:drop-shadow(0 10px 22px rgba(34,23,18,.18));z-index:3;pointer-events:none">
+<svg viewBox="0 0 128 128" width="96" height="96" style="animation:ghspin 28s linear infinite"><defs><path id="ghcm" d="M64 64m-48 0a48 48 0 1 1 96 0a48 48 0 1 1 -96 0"></path></defs><circle cx="64" cy="64" r="63" fill="#ECE6D3"></circle><text style="font:500 9.5px Geist,sans-serif;letter-spacing:3.6px" fill="#221712"><textPath href="#ghcm" data-sello="1">MASTER · LASH LIFTING · LIMA · PERÚ · </textPath></text></svg>
+<sc-if value="{{ hasLogo }}"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><img data-logo="1" alt="{{ xLogoAlt }}" style="width:44px;height:44px;object-fit:contain;display:block;animation:ghseal 1.3s cubic-bezier(.16,1,.3,1) 1.05s both"></span></sc-if>
+<sc-if value="{{ noLogo }}"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:23px;color:#771011">G</span></sc-if>
 </div>
 </div>
 <div style="position:relative;z-index:2;margin-top:-150px;padding:0 22px">
