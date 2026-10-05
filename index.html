@@ -306,7 +306,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 
 <section data-method="1" style="background:#E3DCC6;padding:clamp(100px,14vh,170px) clamp(22px,4vw,56px)">
 <div style="max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:clamp(40px,6vw,100px);align-items:start">
-<div style="position:sticky;top:120px">
+<div style="position:{{ metPos }};top:{{ metTop }}">
 <div data-reveal="up" style="display:flex;align-items:center;gap:14px;font:400 11px/1 Geist,sans-serif;letter-spacing:.3em;color:#771011"><span style="width:42px;height:1px;background:#771011;display:block"></span>{{ xMetEt }}</div>
 <h2 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(44px,5vw,80px);line-height:.98;letter-spacing:-.015em;color:#221712;margin:26px 0 0">
 <span style="display:block;overflow:hidden;padding:0 0 .24em 0;margin-bottom:-0.24em"><span data-reveal="line" style="display:block">{{ xMetL1 }}</span></span>
@@ -1142,6 +1142,7 @@ class Component extends DCLogic {
 
       waSize: mob?'58px':'60px', waRight: mob?'16px':'28px', waBottom: mob?'18px':'28px',
       footPadR: mob?'84px':'100px',
+      metPos: mob?'relative':'sticky', metTop: mob?'0px':'120px',
 
       loginOpen:!!st.login, loginMsg:!!st.loginMsg,
       openLogin:(e)=>{e.preventDefault();this.openLoginOrEditor();},
