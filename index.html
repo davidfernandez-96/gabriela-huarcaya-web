@@ -22,15 +22,20 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 @keyframes ghcue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}50.1%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 @keyframes ghpulse{0%,100%{box-shadow:0 10px 26px -10px rgba(34,23,18,.5),0 0 0 0 rgba(37,211,102,.28)}50%{box-shadow:0 10px 26px -10px rgba(34,23,18,.5),0 0 0 9px rgba(37,211,102,0)}}
 @keyframes ghfade{from{opacity:0}to{opacity:1}}
+@keyframes ghlogo{from{opacity:0;transform:scale(.55) rotate(-14deg)}to{opacity:1;transform:none}}
+@keyframes ghseal{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
 </style></helmet>
 
 <div ref="{{ root }}" style="background:#ECE6D3;min-height:100vh;overflow-x:clip;position:relative">
 
 <header style="position:fixed;top:0;left:0;right:0;z-index:60;background:{{ navBg }};backdrop-filter:{{ navBlur }};-webkit-backdrop-filter:{{ navBlur }};box-shadow:{{ navShadow }};border-bottom:1px solid {{ navLine }};transition:background .5s ease,box-shadow .5s ease,border-color .5s ease">
 <div style="max-width:1440px;margin:0 auto;padding:0 clamp(20px,4vw,56px);height:{{ navH }}px;display:flex;align-items:center;gap:24px;transition:height .45s cubic-bezier(.16,1,.3,1)">
-<a href="#inicio" style="display:flex;flex-direction:column;gap:5px;flex:none">
+<a href="#inicio" style="display:flex;align-items:center;gap:{{ logoGap }};flex:none">
+<sc-if value="{{ hasLogo }}"><span style="width:{{ logoH }}px;height:{{ logoH }}px;flex:none;display:block;transition:width .45s cubic-bezier(.16,1,.3,1),height .45s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)" style-hover="transform:rotate(-8deg) scale(1.06)"><img src="{{ logoUrl }}" alt="{{ xLogoAlt }}" style="width:100%;height:100%;object-fit:contain;display:block;animation:ghlogo 1.1s cubic-bezier(.16,1,.3,1) .2s both"></span></sc-if>
+<span style="display:flex;flex-direction:column;gap:5px">
 <span style="font:500 13px/1 Geist,sans-serif;letter-spacing:.24em;color:#221712">{{ xNombre }}</span>
 <span style="font:400 9.5px/1 Geist,sans-serif;letter-spacing:.32em;color:#771011">{{ xSub }}</span>
+</span>
 </a>
 <sc-if value="{{ desktop }}" hint-placeholder-val="{{ true }}">
 <nav style="flex:1;display:flex;justify-content:center;gap:clamp(14px,2.4vw,36px)">
@@ -53,7 +58,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <sc-if value="{{ menuOpen }}">
 <div style="position:fixed;inset:0;z-index:70;background:#ECE6D3;display:flex;flex-direction:column;padding:22px 24px 30px;animation:ghfade .3s ease both">
 <div style="display:flex;align-items:center;height:44px">
-<span style="flex:1;font:500 12px/1 Geist,sans-serif;letter-spacing:.24em">{{ xNombre }}</span>
+<span style="flex:1;display:flex;align-items:center;gap:10px"><sc-if value="{{ hasLogo }}"><img src="{{ logoUrl }}" alt="{{ xLogoAlt }}" style="width:32px;height:32px;object-fit:contain;display:block;animation:ghlogo .9s cubic-bezier(.16,1,.3,1) .1s both"></sc-if><span style="font:500 12px/1 Geist,sans-serif;letter-spacing:.24em">{{ xNombre }}</span></span>
 <button onClick="{{ toggleMenu }}" aria-label="Cerrar menú" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(34,23,18,.22);background:transparent;cursor:pointer;font:300 22px/1 Geist,sans-serif;color:#221712">×</button>
 </div>
 <nav style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px">
@@ -81,7 +86,8 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 </div>
 <div data-reveal="fade" data-delay="1100" style="position:absolute;right:clamp(28px,4vw,64px);top:clamp(110px,16vh,160px);width:128px;height:128px;z-index:3;pointer-events:none">
 <svg viewBox="0 0 128 128" width="128" height="128" style="animation:ghspin 28s linear infinite"><defs><path id="ghc" d="M64 64m-48 0a48 48 0 1 1 96 0a48 48 0 1 1 -96 0"></path></defs><circle cx="64" cy="64" r="63" fill="#ECE6D3"></circle><text style="font:500 9.5px Geist,sans-serif;letter-spacing:3.6px" fill="#221712"><textPath href="#ghc" data-sello="1">MASTER · LASH LIFTING · LIMA · PERÚ · </textPath></text></svg>
-<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:30px;color:#771011">G</span>
+<sc-if value="{{ hasLogo }}"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><img src="{{ logoUrl }}" alt="{{ xLogoAlt }}" style="width:58px;height:58px;object-fit:contain;display:block;animation:ghseal 1.3s cubic-bezier(.16,1,.3,1) 1.25s both"></span></sc-if>
+<sc-if value="{{ noLogo }}"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:30px;color:#771011">G</span></sc-if>
 </div>
 <div style="position:relative;z-index:2;width:100%;max-width:1440px;margin:0 auto;padding:120px calc(min(1440px,100vw - 2*clamp(24px,4vw,56px)) - (43vw - 40px - clamp(24px,4vw,56px) - max(0px,(100vw - 2*clamp(24px,4vw,56px) - 1440px)/2))) 80px 0;container-type:inline-size">
 <div style="overflow:hidden">
@@ -398,7 +404,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 </div>
 </div>
 <footer style="max-width:1440px;margin:0 auto;padding:28px {{ footPadR }} 10px clamp(10px,2vw,28px);display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-<span style="flex:1;min-width:220px;font:500 12px/1 Geist,sans-serif;letter-spacing:.22em;color:#221712">{{ xNombre }}</span>
+<span style="flex:1;min-width:220px;display:flex;align-items:center;gap:10px"><sc-if value="{{ hasLogo }}"><img src="{{ logoUrl }}" alt="{{ xLogoAlt }}" style="width:30px;height:30px;object-fit:contain;display:block;"></sc-if><span style="font:500 12px/1 Geist,sans-serif;letter-spacing:.22em;color:#221712">{{ xNombre }}</span></span>
 <sc-if value="{{ hasIg }}"><a href="{{ ig }}" target="_blank" rel="noopener" style="font:400 13px/1 Geist,sans-serif;color:#221712">Instagram</a></sc-if>
 <a href="{{ wa }}" target="_blank" rel="noopener" style="font:400 13px/1 Geist,sans-serif;color:#221712">WhatsApp</a>
 <span style="font:300 12px/1 Geist,sans-serif;color:#6F635B">© {{ xYear }} · {{ xCiudad }}</span>
@@ -451,7 +457,8 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <sc-if value="{{ edOpen }}">
 <div role="dialog" aria-modal="true" aria-label="Editor del sitio" style="position:fixed;inset:0;z-index:96;background:#F5F0E1;display:flex;flex-direction:column;animation:ghfade .3s ease both;font-family:Geist,sans-serif;color:#221712">
 <header style="flex:none;height:64px;display:flex;align-items:center;gap:14px;padding:0 clamp(14px,2vw,24px);background:#221712;color:#ECE6D3">
-<span style="width:34px;height:34px;border-radius:10px;background:#771011;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:19px;flex:none">G</span>
+<sc-if value="{{ hasLogo }}"><span style="width:34px;height:34px;border-radius:10px;background:#ECE6D3;display:flex;align-items:center;justify-content:center;flex:none;padding:3px"><img src="{{ logoUrl }}" alt="{{ xLogoAlt }}" style="width:100%;height:100%;object-fit:contain;display:block;"></span></sc-if>
+<sc-if value="{{ noLogo }}"><span style="width:34px;height:34px;border-radius:10px;background:#771011;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:19px;flex:none">G</span></sc-if>
 <span style="flex:1;min-width:0">
 <span style="display:block;font:500 13px/1.2 Geist,sans-serif">Editar sitio</span>
 <span style="display:block;font:300 11px/1.3 Geist,sans-serif;color:rgba(236,230,211,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ edStatus }}</span>
@@ -682,6 +689,9 @@ class Component extends DCLogic {
     const root=this.root.current; if(!root) return;
     const val=String(this.pv('ajustes.sello')||'').toUpperCase()+' · ';
     root.querySelectorAll('[data-sello]').forEach(el=>{ if(el.textContent!==val) el.textContent=val; });
+    const logo=window.GH&&window.GH.slotUrl?window.GH.slotUrl('gh-logo'):'';
+    const icon=document.querySelector('link[rel="icon"]');
+    if(icon){ if(!this._defaultIcon) this._defaultIcon=icon.href; const want=logo||this._defaultIcon; if(icon.href!==want) icon.href=want; }
   }
 
   componentWillUnmount(){
@@ -1003,6 +1013,7 @@ class Component extends DCLogic {
     const cl2n=Math.max(0,words(cursoL2).length-2), tarN=Math.max(0,words(tarTi).length-1);
     const frase=s('inicio.frase').split('\n');
     const gh=window.GH, hasSlot=(id)=>!!(gh&&gh.hasSlot(id));
+    const logoUrl=gh&&gh.slotUrl?gh.slotUrl('gh-logo'):'';
     const menu=arr('ajustes.menu');
     const fichaStyles={
       MODALIDAD:['#F5F0E1','#221712','#771011'], 'DURACIÓN':['#F5F0E1','#221712','#771011'],
@@ -1029,6 +1040,8 @@ class Component extends DCLogic {
       menuOpen:st.menu, toggleMenu:()=>this.setState(s=>({menu:!s.menu})),
 
       // Textos editables
+      hasLogo:!!logoUrl, noLogo:!logoUrl, logoUrl:logoUrl||'', xLogoAlt:'Logo de '+s('ajustes.nombre'),
+      logoH: sc?(mob?32:36):(mob?38:46), logoGap: mob?'10px':'14px',
       xNombre:U('ajustes.nombre'), xSub:U('ajustes.subtitulo'), xCtaMenu:s('ajustes.ctaMenu'),
       xSello:U('ajustes.sello')+' · ', xCiudad:s('ajustes.ciudad'), xYear:String(new Date().getFullYear()),
       xAnte:U('inicio.ante'), xL1:s('inicio.l1'), xL2:s('inicio.l2'), xScroll:U('inicio.scroll'),
@@ -1117,6 +1130,7 @@ const T=(k,label,max,o={})=>({k,label,max,type:'text',...o});
 const A=(k,label,max,o={})=>({k,label,max,type:'area',...o});
 const ED_SECS=[
  {id:'ajustes',t:'Ajustes del sitio',help:'Tu nombre, tu WhatsApp y cómo aparece la web en Google y al compartir el enlace.',fields:[
+  {k:'logo',label:'Tu logo',type:'image',slot:'gh-logo',ratio:'1/1',hint:'Aparece junto a tu nombre, en el centro del sello y en la pestaña del navegador. Mejor PNG cuadrado con fondo transparente.'},
   T('nombre','Tu nombre',30), T('subtitulo','Frase bajo tu nombre',30,{hint:'Ej.: MASTER LASH LIFTING'}),
   T('whatsapp','Número de WhatsApp',11,{hint:'Con 51 adelante y sin espacios. Ej.: 51987654321'}),
   T('instagram','Enlace de Instagram',80,{ph:'https://instagram.com/usuario'}),
@@ -1182,7 +1196,7 @@ const ED_SECS=[
   A('texto','Texto',160,{rows:2}), T('cta','Botón principal',34,{full:true})]}
 ];
 const ED_DEFAULT={
- 'ajustes.nombre':'Gabriela Huarcaya','ajustes.subtitulo':'Master Lash Lifting','ajustes.whatsapp':'51900000000',
+ 'ajustes.nombre':'Gabriela Huarcaya','ajustes.logoAlt':'Logo de Gabriela Huarcaya','ajustes.subtitulo':'Master Lash Lifting','ajustes.whatsapp':'51900000000',
  'ajustes.instagram':'https://instagram.com/','ajustes.mensaje':'Hola Gabriela, quiero información del curso de Lifting de Pestañas.',
  'ajustes.ctaMenu':'Quiero información','ajustes.ciudad':'Lima, Perú','ajustes.sello':'MASTER · LASH LIFTING · LIMA · PERÚ',
  'ajustes.menu':['Inicio','Sobre Gabriela','Curso','Trabajos','Contacto'],

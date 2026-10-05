@@ -86,6 +86,12 @@
       return hasUrl(src[id]);
     },
 
+    // URL de una foto (publicada o recién cambiada en el editor); '' si no hay.
+    slotUrl(id) {
+      const v = (pendingSlots || slots)[id];
+      return v ? (typeof v === 'string' ? v : v.u || '') : '';
+    },
+
     async signIn(email, password) {
       try {
         const { data, error } = await sb.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
