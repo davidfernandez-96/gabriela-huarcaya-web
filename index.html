@@ -59,6 +59,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <div style="max-width:1440px;margin:0 auto;padding:0 clamp(20px,4vw,56px);height:{{ navH }}px;display:flex;align-items:center;gap:24px;transition:height .45s cubic-bezier(.16,1,.3,1)">
 <a href="#inicio" aria-label="Ir al inicio" style="display:flex;align-items:center;gap:{{ logoGap }};flex:none;min-height:44px">
 <sc-if value="{{ hasLogo }}"><span style="width:{{ logoH }}px;height:{{ logoH }}px;flex:none;display:block;transition:width .45s cubic-bezier(.16,1,.3,1),height .45s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)" style-hover="transform:rotate(-8deg) scale(1.06)"><img data-logo="1" alt="{{ xLogoAlt }}" style="width:100%;height:100%;object-fit:contain;display:block;animation:ghlogo 1.1s cubic-bezier(.16,1,.3,1) .2s both"></span></sc-if>
+<sc-if value="{{ noLogo }}"><span style="width:{{ logoH }}px;height:{{ logoH }}px;flex:none;display:block;transition:width .45s cubic-bezier(.16,1,.3,1),height .45s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)" style-hover="transform:rotate(-8deg) scale(1.06)"><span aria-hidden="true" style="width:100%;height:100%;flex:none;border-radius:50%;border:1px solid rgba(119,16,17,.55);display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:{{ monoFs }}px;line-height:1;color:#771011;padding-bottom:.06em;animation:ghlogo 1.1s cubic-bezier(.16,1,.3,1) .2s both;transition:font-size .45s cubic-bezier(.16,1,.3,1)">G</span></span></sc-if>
 <span style="display:flex;flex-direction:column;gap:5px">
 <span style="font:500 13px/1 Geist,sans-serif;letter-spacing:.24em;color:#221712">{{ xNombre }}</span>
 <span style="font:400 9.5px/1 Geist,sans-serif;letter-spacing:.32em;color:#771011">{{ xSub }}</span>
@@ -85,7 +86,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 <sc-if value="{{ menuOpen }}">
 <div style="position:fixed;inset:0;z-index:70;background:#ECE6D3;display:flex;flex-direction:column;padding:22px 24px 30px;animation:ghfade .3s ease both">
 <div style="display:flex;align-items:center;height:44px">
-<span style="flex:1;display:flex;align-items:center;gap:10px"><sc-if value="{{ hasLogo }}"><img data-logo="1" alt="{{ xLogoAlt }}" style="width:32px;height:32px;object-fit:contain;display:block;animation:ghlogo .9s cubic-bezier(.16,1,.3,1) .1s both"></sc-if><span style="font:500 12px/1 Geist,sans-serif;letter-spacing:.24em">{{ xNombre }}</span></span>
+<span style="flex:1;display:flex;align-items:center;gap:10px"><sc-if value="{{ noLogo }}"><span aria-hidden="true" style="width:32px;height:32px;flex:none;border-radius:50%;border:1px solid rgba(119,16,17,.55);display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:17px;line-height:1;color:#771011;padding-bottom:.06em;animation:ghlogo .9s cubic-bezier(.16,1,.3,1) .1s both">G</span></sc-if><sc-if value="{{ hasLogo }}"><img data-logo="1" alt="{{ xLogoAlt }}" style="width:32px;height:32px;object-fit:contain;display:block;animation:ghlogo .9s cubic-bezier(.16,1,.3,1) .1s both"></sc-if><span style="font:500 12px/1 Geist,sans-serif;letter-spacing:.24em">{{ xNombre }}</span></span>
 <button onClick="{{ toggleMenu }}" aria-label="Cerrar menú" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(34,23,18,.22);background:transparent;cursor:pointer;font:300 22px/1 Geist,sans-serif;color:#221712">×</button>
 </div>
 <nav style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px">
@@ -431,7 +432,7 @@ a{color:#221712;text-decoration:none}a:hover{color:#771011}
 </div>
 </div>
 <footer style="max-width:1440px;margin:0 auto;padding:28px {{ footPadR }} 10px clamp(10px,2vw,28px);display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-<span style="flex:1;min-width:220px;display:flex;align-items:center;gap:10px"><sc-if value="{{ hasLogo }}"><img data-logo="1" alt="{{ xLogoAlt }}" style="width:30px;height:30px;object-fit:contain;display:block;"></sc-if><span style="font:500 12px/1 Geist,sans-serif;letter-spacing:.22em;color:#221712">{{ xNombre }}</span></span>
+<span style="flex:1;min-width:220px;display:flex;align-items:center;gap:10px"><sc-if value="{{ noLogo }}"><span aria-hidden="true" style="width:30px;height:30px;flex:none;border-radius:50%;border:1px solid rgba(119,16,17,.55);display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:16px;line-height:1;color:#771011;padding-bottom:.06em;">G</span></sc-if><sc-if value="{{ hasLogo }}"><img data-logo="1" alt="{{ xLogoAlt }}" style="width:30px;height:30px;object-fit:contain;display:block;"></sc-if><span style="font:500 12px/1 Geist,sans-serif;letter-spacing:.22em;color:#221712">{{ xNombre }}</span></span>
 <sc-if value="{{ hasIg }}"><a href="{{ ig }}" target="_blank" rel="noopener" style="font:400 13px/1 Geist,sans-serif;color:#221712;display:inline-flex;align-items:center;min-height:44px;padding:0 4px">Instagram</a></sc-if>
 <a href="{{ wa }}" target="_blank" rel="noopener" style="font:400 13px/1 Geist,sans-serif;color:#221712;display:inline-flex;align-items:center;min-height:44px;padding:0 4px">WhatsApp</a>
 <span style="font:300 12px/1 Geist,sans-serif;color:#6F635B">© {{ xYear }} · {{ xCiudad }}</span>
@@ -1084,6 +1085,7 @@ class Component extends DCLogic {
       // Textos editables
       hasLogo:!!logoUrl, noLogo:!logoUrl, logoUrl:logoUrl||'', xLogoAlt:'Logo de '+s('ajustes.nombre'),
       logoH: sc?(mob?32:36):(mob?38:46), logoGap: mob?'10px':'14px',
+      monoFs: Math.round((sc?(mob?32:36):(mob?38:46))*0.52),
       xNombre:U('ajustes.nombre'), xSub:U('ajustes.subtitulo'), xCtaMenu:s('ajustes.ctaMenu'),
       xSello:U('ajustes.sello')+' · ', xCiudad:s('ajustes.ciudad'), xYear:String(new Date().getFullYear()),
       xAnte:U('inicio.ante'), xL1:s('inicio.l1'), xL2:s('inicio.l2'), xScroll:U('inicio.scroll'),
