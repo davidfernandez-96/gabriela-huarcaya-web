@@ -1,0 +1,6 @@
+# Exportación cruda de Claude Design (solo referencia local, no se publica)
+_design_source/
+.claude/
+node_modules/
+.DS_Store
+Thumbs.db
