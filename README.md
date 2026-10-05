@@ -46,6 +46,20 @@ Los textos que no estén en `data` toman su valor por defecto de `ED_DEFAULT` en
 2. Elige la sección a la izquierda, cambia textos o arrastra fotos a los recuadros.
 3. **Publicar cambios** → se ve en la web al recargar.
 
+- **WhatsApp:** sección propia con número (validado), mensaje que llega, texto del botón verde,
+  mostrar/ocultar el botón flotante y "Probar mi WhatsApp". Afecta a todos los botones de la web.
+- **Logo:** *Ajustes del sitio → Tu logo*. Se le quita solo el fondo blanco, se recorta y se centra.
+  Aparece en el menú, en el sello, en el pie, en el editor, en la pantalla de carga y como ícono de la pestaña.
+- **Fotos inteligentes:** al subir una foto se optimiza (WebP, máx. 1600 px, orientación corregida) y se
+  detecta su punto de interés (rostro o zona con más detalle). El recorte se recalcula en cada tamaño de
+  pantalla para que lo importante quede siempre a la vista. "Encuadrar" permite un ajuste manual, que tiene prioridad.
+
+## Responsive
+
+Revisado automáticamente (sin scroll horizontal, nada fuera de pantalla, sin textos cortados y
+botones táctiles ≥ 40 px) en 320, 360, 375, 390, 414, 430, 600, 768, 820, 1024, 1180, 1280, 1366,
+1440, 1536, 1920 y 2560 px. Celular y tablet vertical usan la composición móvil; desde 1024 px, la de escritorio.
+
 ## Desarrollo local
 
 ```bash

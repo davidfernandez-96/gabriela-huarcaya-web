@@ -260,21 +260,126 @@
   // raw upload. Longest side is capped at 2× the slot's rendered width
   // (retina) and at MAX_DIM. WebP keeps alpha and is ~10× smaller than PNG
   // for photos, so there's no need for per-image format picking.
-  async function toDataUrl(file, targetW) {
-    const bitmap = await createImageBitmap(file);
+  // Gabriela Huarcaya: cada foto subida se procesa sola —
+  //  · se reduce a MAX_DIM y se guarda en WebP (respeta la orientación EXIF);
+  //  · se calcula su punto de interés (rostro / ojos / zona con más detalle)
+  //    para que el recorte se adapte a cualquier pantalla (ver _autoFocus);
+  //  · el logo (id gh-logo) además se recorta, pierde el fondo blanco y queda cuadrado.
+  async function toDataUrl(file, targetW, id) {
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
     try {
-      const cap = MAX_DIM;
-      const scale = Math.min(1, cap / Math.max(bitmap.width, bitmap.height));
+      if (id === 'gh-logo') return { url: processLogo(bitmap), fx: 0.5, fy: 0.5 };
+      const focal = await findFocal(bitmap);
+      const scale = Math.min(1, MAX_DIM / Math.max(bitmap.width, bitmap.height));
       const w = Math.max(1, Math.round(bitmap.width * scale));
       const h = Math.max(1, Math.round(bitmap.height * scale));
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
-      return canvas.toDataURL('image/webp', 0.85);
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      return { url: canvas.toDataURL('image/webp', 0.86), fx: focal.fx, fy: focal.fy, small: Math.max(bitmap.width, bitmap.height) < 900 };
     } finally {
       bitmap.close && bitmap.close();
     }
   }
+
+  // Punto de interés: primero detección de rostros (si el navegador la tiene);
+  // si no, un mapa de "energía" (detalle + tono de piel + color) con leve
+  // preferencia por el centro, del que se toma el centroide de la zona más fuerte.
+  async function findFocal(bitmap) {
+    const clamp01 = (v) => Math.max(0.08, Math.min(0.92, v));
+    try {
+      if ('FaceDetector' in window) {
+        const faces = await new window.FaceDetector({ fastMode: true, maxDetectedFaces: 5 }).detect(bitmap);
+        if (faces && faces.length) {
+          let x = 0, y = 0, a = 0;
+          for (const f of faces) {
+            const b = f.boundingBox, area = b.width * b.height;
+            x += (b.x + b.width / 2) * area; y += (b.y + b.height * 0.42) * area; a += area;
+          }
+          return { fx: clamp01(x / a / bitmap.width), fy: clamp01(y / a / bitmap.height) };
+        }
+      }
+    } catch (e) { /* sin detector de rostros: se usa el mapa de energía */ }
+    const S = 96, sc = S / Math.max(bitmap.width, bitmap.height);
+    const w = Math.max(8, Math.round(bitmap.width * sc)), h = Math.max(8, Math.round(bitmap.height * sc));
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d', { willReadFrequently: true });
+    g.drawImage(bitmap, 0, 0, w, h);
+    const d = g.getImageData(0, 0, w, h).data;
+    const lum = new Float32Array(w * h), e = new Float32Array(w * h), sk = new Uint8Array(w * h);
+    for (let i = 0; i < w * h; i++) lum[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2];
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+      const i = y * w + x, r = d[i * 4], gg = d[i * 4 + 1], b = d[i * 4 + 2];
+      const grad = Math.abs(lum[i + 1] - lum[i - 1]) + Math.abs(lum[i + w] - lum[i - w]);
+      const mx = Math.max(r, gg, b), mn = Math.min(r, gg, b);
+      const skin = r > 95 && gg > 40 && b > 20 && r > gg && r > b && r - mn > 15 ? 1 : 0;
+      const sat = mx ? (mx - mn) / mx : 0;
+      const dx = x / w - 0.5, dy = y / h - 0.45;
+      sk[i] = skin;
+      e[i] = (grad * 0.7 + skin * 48 + sat * 10) * (1 - 0.9 * (dx * dx + dy * dy));
+    }
+    // Retrato (algo de piel, no toda la foto): centrar en la piel = el rostro.
+    // Primer plano (casi toda piel, p. ej. un ojo): se usa el detalle (pestañas).
+    let skinN = 0, kx = 0, ky = 0;
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) if (sk[y * w + x]) { skinN++; kx += x; ky += y; }
+    const skinFrac = skinN / ((w - 2) * (h - 2));
+    if (skinFrac > 0.01 && skinFrac < 0.35) return { fx: clamp01(kx / skinN / w), fy: clamp01(ky / skinN / h - 0.03) };
+    const sorted = Array.from(e).sort((a, b) => b - a);
+    const thr = sorted[Math.floor(sorted.length * 0.12)] || 0;
+    let sx = 0, sy = 0, sw = 0;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const v = e[y * w + x]; if (v < thr || v <= 0) continue;
+      sx += x * v; sy += y * v; sw += v;
+    }
+    if (!sw) return { fx: 0.5, fy: 0.5 };
+    return { fx: clamp01(sx / sw / w), fy: clamp01(sy / sw / h) };
+  }
+
+  // Logo: quita el fondo blanco unido a los bordes (los blancos internos se
+  // conservan), recorta el espacio vacío y lo centra en un lienzo cuadrado.
+  function processLogo(bitmap) {
+    const M = 1000, sc = Math.min(1, M / Math.max(bitmap.width, bitmap.height));
+    const w = Math.max(1, Math.round(bitmap.width * sc)), h = Math.max(1, Math.round(bitmap.height * sc));
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d', { willReadFrequently: true });
+    g.drawImage(bitmap, 0, 0, w, h);
+    const img = g.getImageData(0, 0, w, h), d = img.data;
+    const isWhite = (i) => d[i + 3] > 200 && d[i] > 232 && d[i + 1] > 232 && d[i + 2] > 232;
+    let edge = 0, white = 0;
+    for (let x = 0; x < w; x++) for (const y of [0, h - 1]) { edge++; if (isWhite((y * w + x) * 4)) white++; }
+    for (let y = 0; y < h; y++) for (const x of [0, w - 1]) { edge++; if (isWhite((y * w + x) * 4)) white++; }
+    if (white / edge > 0.85) {
+      const seen = new Uint8Array(w * h), stack = [];
+      for (let x = 0; x < w; x++) stack.push(x, (h - 1) * w + x);
+      for (let y = 0; y < h; y++) stack.push(y * w, y * w + w - 1);
+      while (stack.length) {
+        const p = stack.pop(); if (seen[p]) continue; seen[p] = 1;
+        const i = p * 4; if (!isWhite(i)) continue;
+        d[i + 3] = 0;
+        const x = p % w;
+        if (x > 0) stack.push(p - 1); if (x < w - 1) stack.push(p + 1);
+        if (p >= w) stack.push(p - w); if (p < w * (h - 1)) stack.push(p + w);
+      }
+      g.putImageData(img, 0, 0);
+    }
+    let x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      if (d[(y * w + x) * 4 + 3] > 16) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    }
+    if (x1 < 0) { x0 = 0; y0 = 0; x1 = w - 1; y1 = h - 1; }
+    const bw = x1 - x0 + 1, bh = y1 - y0 + 1, side = Math.round(Math.max(bw, bh) * 1.06);
+    const out = document.createElement('canvas'), O = Math.min(800, side);
+    out.width = O; out.height = O;
+    const k = O / side, o = out.getContext('2d');
+    o.imageSmoothingQuality = 'high';
+    o.drawImage(c, x0, y0, bw, bh, (O - bw * k) / 2, (O - bh * k) / 2, bw * k, bh * k);
+    return out.toDataURL('image/webp', 0.92);
+  }
+
+  // Herramientas reutilizables (p. ej. para recalcular el punto de interés de fotos ya publicadas).
+  window.GHImageTools = { findFocal, processLogo };
 
   // ── Custom element ──────────────────────────────────────────────────────
   const stylesheet =
@@ -505,10 +610,10 @@
       root.innerHTML =
         '<style>' + stylesheet + '</style>' +
         '<div class="frame" part="frame">' +
-        '  <img part="image" alt="" draggable="false" style="display:none">' +
+        '  <img part="image" alt="" draggable="false" loading="lazy" decoding="async" style="display:none">' +
         '  <div class="empty" part="empty">' + icon +
         '    <div class="cap"></div>' +
-        '    <div class="sub">or <u>browse files</u></div></div>' +
+        '    <div class="sub">o <u>haz clic para elegir</u></div></div>' +
         '  <div class="attr-error" part="attribution-error">' + warnIcon +
         '    <div class="cap">This photo needs attribution</div></div>' +
         '  <div class="loading" part="loading"></div>' +
@@ -528,8 +633,8 @@
         // clicks through for chrome marked with it (EDIT_TRANSPARENT_SEL)
         // — without it, Replace/Edit clicks in Edit mode are swallowed by
         // element selection and the controls look dead.
-        '<div class="ctl" popover="manual" data-dc-edit-transparent><button data-act="replace" title="Replace image">Replace</button>' +
-        '  <button data-act="edit" title="Reframe image">Edit</button></div>' +
+        '<div class="ctl" popover="manual" data-dc-edit-transparent><button data-act="replace" title="Cambiar foto">Cambiar</button>' +
+        '  <button data-act="edit" title="Encuadrar: arrastra para mover, rueda o esquinas para acercar">Encuadrar</button></div>' +
         '<input type="file" accept="' + ACCEPT.join(',') + '" hidden>';
       this._frame = root.querySelector('.frame');
       this._ring = root.querySelector('.ring');
@@ -883,7 +988,7 @@
     async _ingest(file) {
       this._setError(null);
       if (!file || ACCEPT.indexOf(file.type) < 0) {
-        this._setError('Drop a PNG, JPEG, WebP, or AVIF image.');
+        this._setError('Usa una foto PNG, JPG, WebP o AVIF.');
         return;
       }
       // toDataUrl can take hundreds of ms on a large photo. A Clear or a
@@ -904,7 +1009,8 @@
       }
       try {
         const w = this.clientWidth || this.offsetWidth || MAX_DIM;
-        const url = await toDataUrl(file, w);
+        const res = await toDataUrl(file, w, this.id);
+        const url = res.url;
         if (gen !== this._gen) return;
         // Only exit reframe once the new image is in hand — a rejected type
         // or decode failure leaves the in-progress crop untouched.
@@ -913,8 +1019,11 @@
         // pending encode, so a byte-identical re-upload (same data URL, no
         // load event coming) still clears the mask via the complete branch.
         this._swapGen = 0;
-        const val = { u: url, s: 1, x: 0, y: 0 };
+        // fx/fy = punto de interés (0..1). Mientras no se encuadre a mano, el
+        // recorte se calcula en cada tamaño de pantalla a partir de él.
+        const val = { u: url, s: 1, x: 0, y: 0, fx: res.fx, fy: res.fy };
         setSlot(this.id || '', val);
+        if (res.small) this._setError('Foto pequeña: puede verse borrosa en pantallas grandes.');
         // Keep a session-local copy for id-less slots so the drop still
         // shows, even though it cannot persist.
         if (!this.id) { this._local = val; this._render(); }
@@ -925,7 +1034,7 @@
         // remote pick's src swap) is still in flight, in which case the
         // mask stays until THAT image settles (its load/error releases).
         this._releaseMask();
-        this._setError('Could not read that image.');
+        this._setError('No se pudo leer esa foto. Prueba con otra.');
         console.warn('<image-slot> ingest failed:', err);
       }
     }
@@ -1036,6 +1145,14 @@
       // a responsive resize keeps the same crop. The spill layer mirrors the
       // same box so its corners = image corners.
       const k = g.base * this._view.s;
+      // Encuadre automático: centra el punto de interés dentro del recorte
+      // (sin dejar bordes vacíos) para el tamaño actual del recuadro.
+      if (this._focal && !this.hasAttribute('data-reframe')) {
+        const W = g.iw * k / g.fw * 100, H = g.ih * k / g.fh * 100;
+        const mx = Math.max(0, W / 2 - 50), my = Math.max(0, H / 2 - 50);
+        this._view.x = Math.max(-mx, Math.min(mx, -(this._focal.fx - 0.5) * W));
+        this._view.y = Math.max(-my, Math.min(my, -(this._focal.fy - 0.5) * H));
+      }
       const w = (g.iw * k / g.fw * 100) + '%';
       const h = (g.ih * k / g.fh * 100) + '%';
       const l = (50 + this._view.x) + '%';
@@ -1102,6 +1219,8 @@
       if (stored && stored.u && !/^(data:image\/|https:\/\/|img\/)/i.test(stored.u)) stored = null;
       const srcAttr = this.getAttribute('src') || '';
       this._userUrl = (stored && stored.u) || null;
+      this._focal = stored && Number.isFinite(stored.fx) && Number.isFinite(stored.fy)
+        ? { fx: stored.fx, fy: stored.fy } : null;
       const url = this._userUrl || srcAttr;
       // Don't clobber an in-flight reframe with a store-triggered re-render.
       if (!this.hasAttribute('data-reframe')) {
@@ -1111,7 +1230,9 @@
           y: stored && Number.isFinite(stored.y) ? stored.y : 0,
         };
       }
-      this._cap.textContent = this.getAttribute('placeholder') || 'Drop an image';
+      this._cap.textContent = this.getAttribute('placeholder') || 'Arrastra una foto';
+      // La foto principal se carga primero; el resto, al acercarse a la pantalla.
+      if (this.id === 'gh-hero' && this._img.loading !== 'eager') { this._img.loading = 'eager'; this._img.fetchPriority = 'high'; }
       // Toggle via style.display — the [hidden] attribute alone loses to
       // the display:flex / display:block rules in the stylesheet above.
       // An Unsplash src with no credit attribute must NOT render — showing
