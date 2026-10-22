@@ -1,0 +1,21 @@
+# Mantiene activo el proyecto gratuito de Supabase (gabriela-huarcaya-web).
+# En el plan gratis, Supabase pausa los proyectos tras ~7 días sin actividad;
+# esta tarea hace una lectura pública mínima cada 3 días para evitarlo.
+name: Mantener Supabase activo
+
+on:
+  schedule:
+    - cron: '17 9 */3 * *'   # cada 3 días, 09:17 UTC
+  workflow_dispatch: {}        # también se puede lanzar a mano desde la pestaña Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Leer el contenido publicado
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://croulwnrqsviosxrilte.supabase.co/rest/v1/site_content?select=updated_at&id=eq.main" \
+            -H "apikey: sb_publishable_RY2kGYxGGeAs7v40BArABw_7CVc_dyu")
+          echo "Respuesta de Supabase: $code"
+          test "$code" = "200"
